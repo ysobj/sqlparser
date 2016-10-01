@@ -4,7 +4,7 @@ public class Token {
 	private static final char QUOTE = '\'';
 
 	public static enum TokenType {
-		KEYWORD, LITERAL, NUMBER, OPERATOR, OTHER
+		KEYWORD, LITERAL, NUMBER, OPERATOR, COMMA, OTHER
 	}
 
 	public static final Token EOF = new Token("", TokenType.OTHER);
@@ -23,26 +23,35 @@ public class Token {
 	public TokenType getType() {
 		return type;
 	}
-	private static boolean in(String str, String... target){
+
+	private static boolean in(String str, String... target) {
 		for (String string : target) {
-			if(str.equals(string)){
+			if (str.equals(string)) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	public static Token create(String str) {
 		char c = str.charAt(0);
 		TokenType tmpType = TokenType.KEYWORD;
 		if (c == QUOTE) {
 			tmpType = TokenType.LITERAL;
-		}
-		if ('0' <= c && c <= '9') {
+		} else if ('0' <= c && c <= '9') {
 			tmpType = TokenType.NUMBER;
-		}
-		if (in(str,"+","-","/","*","%","=","<",">",">=","<=","<>","!=")){
+		} else if (in(str, "+", "-", "/", "*", "%", "=", "<", ">", ">=", "<=", "<>", "!=")) {
 			tmpType = TokenType.OPERATOR;
+		} else if (c == ',') {
+			tmpType = TokenType.COMMA;
 		}
-			return new Token(str, tmpType);
+
+		return new Token(str, tmpType);
 	}
+
+	@Override
+	public String toString() {
+		return "Token [original=" + original + ", type=" + type + "]";
+	}
+	
 }

@@ -13,6 +13,7 @@ public class Tokenizer {
 	private static final int EOS = -1;
 	private static final int SPACE = (int) ' ';
 	private static final int QUOTE = (int) '\'';
+	private static final int COMMA = (int) ',';
 
 	public Tokenizer(String string) {
 		this.reader = new StringReader(string);
@@ -90,6 +91,13 @@ public class Tokenizer {
 						return Token.create(sb.toString());
 					}
 					break;
+				case COMMA:
+					if(sb.length() > 0){
+						this.preRead = r;
+						return Token.create(sb.toString());
+					}else{
+						return Token.create(String.valueOf((char)r));
+					}
 				case QUOTE:
 					isOpen = !isOpen;
 					break;
@@ -100,10 +108,13 @@ public class Tokenizer {
 					this.preReadToken = Token.EOF;
 					return this.preReadToken;
 				case SPACE:
-					if (!isOpen) {
+					if (!isOpen && sb.length() > 0) {
 						return Token.create(sb.toString());
+					}else if (isOpen) {
+						break;
+					}else{
+						continue;
 					}
-					break;
 				}
 				sb.append((char) r);
 			} catch (IOException e) {

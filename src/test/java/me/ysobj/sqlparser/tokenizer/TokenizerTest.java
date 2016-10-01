@@ -140,4 +140,44 @@ public class TokenizerTest {
 		assertThat(tmp.getType(), is(TokenType.KEYWORD));
 		assertThat(tokenizer.hasNext(), is(false));
 	}
+
+	@Test
+	public void testWithComma() {
+		Token tmp = null;
+		Tokenizer tokenizer = new Tokenizer("select abc,def, ghi from hoge");
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("select"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("abc"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is(","));
+		assertThat(tmp.getType(), is(TokenType.COMMA));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("def"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is(","));
+		assertThat(tmp.getType(), is(TokenType.COMMA));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("ghi"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("from"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("hoge"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(false));
+	}
+
 }

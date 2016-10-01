@@ -9,6 +9,7 @@ import me.ysobj.sqlparser.model.Token;
 public class Tokenizer {
 	private Reader reader;
 	private Token preRead;
+	private static final int EOS = -1;
 	private static final int SPACE = (int)' ';
 	private static final int QUOTE = (int)'\'';
 
@@ -53,7 +54,7 @@ public class Tokenizer {
 				case QUOTE:
 					isOpen = !isOpen;
 					break;
-				case -1:
+				case EOS:
 					if(sb.length() > 0){
 						return new Token(sb.toString());
 					}

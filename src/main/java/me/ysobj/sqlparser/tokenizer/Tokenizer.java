@@ -56,13 +56,13 @@ public class Tokenizer {
 					break;
 				case EOS:
 					if(sb.length() > 0){
-						return new Token(sb.toString());
+						return Token.create(sb.toString());
 					}
 					this.preRead = Token.EOF;
 					return this.preRead;
 				case SPACE:
 					if(!isOpen){
-						return new Token(sb.toString());
+						return Token.create(sb.toString());
 					}
 					break;
 				}

@@ -8,10 +8,11 @@ import me.ysobj.sqlparser.model.Token;
 
 public class Tokenizer {
 	private Reader reader;
-	private Token preRead;
+	private Token preReadToken;
+	private int preRead = -1;
 	private static final int EOS = -1;
-	private static final int SPACE = (int)' ';
-	private static final int QUOTE = (int)'\'';
+	private static final int SPACE = (int) ' ';
+	private static final int QUOTE = (int) '\'';
 
 	public Tokenizer(String string) {
 		this.reader = new StringReader(string);
@@ -22,46 +23,84 @@ public class Tokenizer {
 	}
 
 	public boolean hasNext() {
-		if( preRead == Token.EOF){
+		if (preReadToken == Token.EOF) {
 			return false;
 		}
-		if (preRead != null) {
+		if (preReadToken != null) {
 			return true;
 		}
 		if (this.reader == null) {
 			return false;
 		}
 		Token t = next();
-		if(t == Token.EOF){
+		if (t == Token.EOF) {
 			return false;
 		}
-		this.preRead = t;
+		this.preReadToken = t;
 		return true;
 	}
 
+	private int read() throws IOException {
+		int r = -1;
+		if (preRead != -1) {
+			r = preRead;
+			preRead = -1;
+		} else {
+			r = reader.read();
+		}
+		return r;
+	}
+
 	public Token next() {
-		if (preRead != null) {
-			Token tmp = this.preRead;
-			this.preRead = null;
+		if (preReadToken != null) {
+			Token tmp = this.preReadToken;
+			this.preReadToken = null;
 			return tmp;
 		}
 		StringBuilder sb = new StringBuilder();
 		boolean isOpen = false;
+		boolean isNumeric = false;
 		while (true) {
 			try {
-				int r = reader.read();
-				switch(r){
+				int r = read();
+				switch (r) {
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+				case '0':
+					if (!isNumeric && sb.length() > 0) {
+						this.preRead = r;
+						return Token.create(sb.toString());
+					}
+					isNumeric = true;
+					break;
+				case '+':
+				case '-':
+				case '*':
+				case '/':
+				case '%':
+					if (isNumeric) {
+						this.preRead = r;
+						return Token.create(sb.toString());
+					}
+					break;
 				case QUOTE:
 					isOpen = !isOpen;
 					break;
 				case EOS:
-					if(sb.length() > 0){
+					if (sb.length() > 0) {
 						return Token.create(sb.toString());
 					}
-					this.preRead = Token.EOF;
-					return this.preRead;
+					this.preReadToken = Token.EOF;
+					return this.preReadToken;
 				case SPACE:
-					if(!isOpen){
+					if (!isOpen) {
 						return Token.create(sb.toString());
 					}
 					break;

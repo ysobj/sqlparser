@@ -109,4 +109,35 @@ public class TokenizerTest {
 		assertThat(tmp.getType(), is(TokenType.KEYWORD));
 		assertThat(tokenizer.hasNext(), is(false));
 	}
+
+	@Test
+	public void testWithNumber2() {
+		Token tmp = null;
+		Tokenizer tokenizer = new Tokenizer("select 123+3.55 from hoge");
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("select"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("123"));
+		assertThat(tmp.getType(), is(TokenType.NUMBER));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("+"));
+		assertThat(tmp.getType(), is(TokenType.OPERATOR));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("3.55"));
+		assertThat(tmp.getType(), is(TokenType.NUMBER));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("from"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("hoge"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(false));
+	}
 }

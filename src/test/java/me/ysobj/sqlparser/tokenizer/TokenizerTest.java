@@ -21,4 +21,17 @@ public class TokenizerTest {
 		assertThat(tokenizer.hasNext(), is(false));
 	}
 
+	@Test
+	public void testWithQuote() {
+		Tokenizer tokenizer = new Tokenizer("select 'ab cd' from hoge");
+		assertThat(tokenizer.hasNext(), is(true));
+		assertThat(tokenizer.next().getOriginal(), is("select"));
+		assertThat(tokenizer.hasNext(), is(true));
+		assertThat(tokenizer.next().getOriginal(), is("'ab cd'"));
+		assertThat(tokenizer.hasNext(), is(true));
+		assertThat(tokenizer.next().getOriginal(), is("from"));
+		assertThat(tokenizer.hasNext(), is(true));
+		assertThat(tokenizer.next().getOriginal(), is("hoge"));
+		assertThat(tokenizer.hasNext(), is(false));
+	}
 }

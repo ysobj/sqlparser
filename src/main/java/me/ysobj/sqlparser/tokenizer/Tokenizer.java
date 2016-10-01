@@ -9,6 +9,8 @@ import me.ysobj.sqlparser.model.Token;
 public class Tokenizer {
 	private Reader reader;
 	private Token preRead;
+	private static final int SPACE = (int)' ';
+	private static final int QUOTE = (int)'\'';
 
 	public Tokenizer(String string) {
 		this.reader = new StringReader(string);
@@ -43,17 +45,24 @@ public class Tokenizer {
 			return tmp;
 		}
 		StringBuilder sb = new StringBuilder();
+		boolean isOpen = false;
 		while (true) {
 			try {
 				int r = reader.read();
-				if (r == -1) {
+				switch(r){
+				case QUOTE:
+					isOpen = !isOpen;
+					break;
+				case -1:
 					if(sb.length() > 0){
 						return new Token(sb.toString());
 					}
 					this.preRead = Token.EOF;
 					return this.preRead;
-				}
-				if (r == 32) {
+				case SPACE:
+					if(!isOpen){
+						return new Token(sb.toString());
+					}
 					break;
 				}
 				sb.append((char) r);
@@ -67,7 +76,6 @@ public class Tokenizer {
 				this.reader = null;
 			}
 		}
-		return new Token(sb.toString());
 	}
 
 }

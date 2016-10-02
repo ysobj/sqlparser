@@ -180,4 +180,46 @@ public class TokenizerTest {
 		assertThat(tokenizer.hasNext(), is(false));
 	}
 
+	@Test
+	public void testNext() {
+		Token tmp = null;
+		Tokenizer tokenizer = new Tokenizer("select");
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("select"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(false));
+		tmp = tokenizer.next();
+		assertThat(tmp, is(Token.EOF));
+	}
+
+	@Test
+	public void testPeek() {
+		Token tmp = null;
+		Tokenizer tokenizer = new Tokenizer("select * from hoge");
+		tmp = tokenizer.peek();
+		assertThat(tmp.getOriginal(), is("select"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		tmp = tokenizer.peek();
+		assertThat(tmp.getOriginal(), is("select"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("select"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("*"));
+		assertThat(tmp.getType(), is(TokenType.OPERATOR));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("from"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("hoge"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(false));
+		tmp = tokenizer.peek();
+		assertThat(tmp, is(Token.EOF));
+	}
 }

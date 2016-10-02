@@ -3,12 +3,15 @@ package me.ysobj.sqlparser.tokenizer;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import me.ysobj.sqlparser.model.Token;
 
 public class Tokenizer {
 	private Reader reader;
-	private Token preReadToken;
+	// private Token preReadToken;
+	private List<Token> preReadTokens = new ArrayList<>();
 	private int preRead = -1;
 	private static final int EOS = -1;
 	private static final int SPACE = (int) ' ';
@@ -24,6 +27,10 @@ public class Tokenizer {
 	}
 
 	public boolean hasNext() {
+		Token preReadToken = null;
+		if (preReadTokens.size() > 0) {
+			preReadToken = preReadTokens.get(0);
+		}
 		if (preReadToken == Token.EOF) {
 			return false;
 		}
@@ -37,7 +44,7 @@ public class Tokenizer {
 		if (t == Token.EOF) {
 			return false;
 		}
-		this.preReadToken = t;
+		preReadTokens.add(t);
 		return true;
 	}
 
@@ -52,11 +59,16 @@ public class Tokenizer {
 		return r;
 	}
 
+	public Token peek() {
+		if(hasNext()){
+			return this.preReadTokens.get(0);
+		}
+		return Token.EOF;
+	}
+
 	public Token next() {
-		if (preReadToken != null) {
-			Token tmp = this.preReadToken;
-			this.preReadToken = null;
-			return tmp;
+		if (preReadTokens.size() > 0) {
+			return preReadTokens.remove(0);
 		}
 		StringBuilder sb = new StringBuilder();
 		boolean isOpen = false;
@@ -92,11 +104,11 @@ public class Tokenizer {
 					}
 					break;
 				case COMMA:
-					if(sb.length() > 0){
+					if (sb.length() > 0) {
 						this.preRead = r;
 						return Token.create(sb.toString());
-					}else{
-						return Token.create(String.valueOf((char)r));
+					} else {
+						return Token.create(String.valueOf((char) r));
 					}
 				case QUOTE:
 					isOpen = !isOpen;
@@ -105,14 +117,14 @@ public class Tokenizer {
 					if (sb.length() > 0) {
 						return Token.create(sb.toString());
 					}
-					this.preReadToken = Token.EOF;
-					return this.preReadToken;
+					this.preReadTokens.add(Token.EOF);
+					return Token.EOF;
 				case SPACE:
 					if (!isOpen && sb.length() > 0) {
 						return Token.create(sb.toString());
-					}else if (isOpen) {
+					} else if (isOpen) {
 						break;
-					}else{
+					} else {
 						continue;
 					}
 				}

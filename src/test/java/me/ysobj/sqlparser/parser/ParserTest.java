@@ -30,4 +30,13 @@ public class ParserTest {
 		assertThat(parser.parse(new Tokenizer("insert")), is(nullValue()));
 	}
 
+	@Test
+	public void testSeaquenceParser() {
+		Parser p1 = new KeywordParser("select");
+		Parser p2 = new KeywordParser("update");
+		Parser p3 = new KeywordParser("delete");
+		Parser parser = new SequenceParser(p1, p2, p3);
+		assertThat(parser.parse(new Tokenizer("select update delete")), not(nullValue()));
+		assertThat(parser.parse(new Tokenizer("select delete update")), is(nullValue()));
+	}
 }

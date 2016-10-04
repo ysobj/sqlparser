@@ -27,7 +27,7 @@ public class ParserTest {
 		Parser p1 = new KeywordParser("select");
 		Parser p2 = new KeywordParser("update");
 		Parser p3 = new KeywordParser("delete");
-		Parser parser = new ChoiseParser(p1, p2, p3);
+		Parser parser = new ChoiceParser(p1, p2, p3);
 		assertThat(parser.parse(new Tokenizer("select")), not(nullValue()));
 		assertThat(parser.parse(new Tokenizer("update")), not(nullValue()));
 		assertThat(parser.parse(new Tokenizer("delete")), not(nullValue()));
@@ -38,7 +38,7 @@ public class ParserTest {
 		Parser p1 = new KeywordParser("select");
 		Parser p2 = new KeywordParser("update");
 		Parser p3 = new KeywordParser("delete");
-		Parser parser = new ChoiseParser(p1, p2, p3);
+		Parser parser = new ChoiceParser(p1, p2, p3);
 		assertThat(parser.parse(new Tokenizer("insert")), is(nullValue()));
 	}
 
@@ -65,7 +65,7 @@ public class ParserTest {
 	@Test
 	public void testCombination() throws Exception {
 		// (A|B)CD
-		Parser ab = new ChoiseParser(new KeywordParser("A"), new KeywordParser(
+		Parser ab = new ChoiceParser(new KeywordParser("A"), new KeywordParser(
 				"B"));
 		Parser parser = new SequenceParser(ab, new KeywordParser("C"),
 				new KeywordParser("D"));
@@ -76,7 +76,7 @@ public class ParserTest {
 	@Test(expected = ParseException.class)
 	public void testCombinationFailed1() throws Exception {
 		// (A|B)CD
-		Parser ab = new ChoiseParser(new KeywordParser("A"), new KeywordParser(
+		Parser ab = new ChoiceParser(new KeywordParser("A"), new KeywordParser(
 				"B"));
 		Parser parser = new SequenceParser(ab, new KeywordParser("C"),
 				new KeywordParser("D"));
@@ -86,7 +86,7 @@ public class ParserTest {
 	@Test(expected = ParseException.class)
 	public void testCombinationFailed2() throws Exception {
 		// (A|B)CD
-		Parser ab = new ChoiseParser(new KeywordParser("A"), new KeywordParser(
+		Parser ab = new ChoiceParser(new KeywordParser("A"), new KeywordParser(
 				"B"));
 		Parser parser = new SequenceParser(ab, new KeywordParser("C"),
 				new KeywordParser("D"));

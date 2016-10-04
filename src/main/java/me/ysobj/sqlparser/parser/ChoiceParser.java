@@ -4,10 +4,10 @@ import me.ysobj.sqlparser.exception.ParseException;
 import me.ysobj.sqlparser.model.ASTree;
 import me.ysobj.sqlparser.tokenizer.Tokenizer;
 
-public class ChoiseParser implements Parser {
+public class ChoiceParser implements Parser {
 	private Parser[] parsers;
 
-	public ChoiseParser(Parser... parsers) {
+	public ChoiceParser(Parser... parsers) {
 		this.parsers = parsers;
 	}
 

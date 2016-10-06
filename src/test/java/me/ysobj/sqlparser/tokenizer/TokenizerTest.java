@@ -1,15 +1,13 @@
 package me.ysobj.sqlparser.tokenizer;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import me.ysobj.sqlparser.model.Token;
+import me.ysobj.sqlparser.model.Token.TokenType;
 
-import static org.hamcrest.core.Is.*;
-import static me.ysobj.sqlparser.model.Token.TokenType;
 import org.junit.Test;
 
-import me.ysobj.sqlparser.model.Token;
-
 public class TokenizerTest {
-
 	@Test
 	public void testSimpleCase() {
 		Token tmp = null;
@@ -207,6 +205,33 @@ public class TokenizerTest {
 		assertThat(tmp.getOriginal(), is("select"));
 		assertThat(tmp.getType(), is(TokenType.KEYWORD));
 		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("*"));
+		assertThat(tmp.getType(), is(TokenType.OPERATOR));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("from"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(true));
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("hoge"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		assertThat(tokenizer.hasNext(), is(false));
+		tmp = tokenizer.peek();
+		assertThat(tmp, is(Token.EOF));
+	}
+
+	@Test
+	public void testPush() {
+		Token tmp = null;
+		Tokenizer tokenizer = new Tokenizer("select * from hoge");
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("select"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
+		tokenizer.push(tmp);
+		tmp = tokenizer.next();
+		assertThat(tmp.getOriginal(), is("select"));
+		assertThat(tmp.getType(), is(TokenType.KEYWORD));
 		tmp = tokenizer.next();
 		assertThat(tmp.getOriginal(), is("*"));
 		assertThat(tmp.getType(), is(TokenType.OPERATOR));

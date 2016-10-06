@@ -10,12 +10,18 @@ import me.ysobj.sqlparser.model.Token;
 
 public class Tokenizer {
 	private Reader reader;
+
 	// private Token preReadToken;
 	private List<Token> preReadTokens = new ArrayList<>();
+
 	private int preRead = -1;
+
 	private static final int EOS = -1;
+
 	private static final int SPACE = (int) ' ';
+
 	private static final int QUOTE = (int) '\'';
+
 	private static final int COMMA = (int) ',';
 
 	public Tokenizer(String string) {
@@ -60,7 +66,7 @@ public class Tokenizer {
 	}
 
 	public Token peek() {
-		if(hasNext()){
+		if (hasNext()) {
 			return this.preReadTokens.get(0);
 		}
 		return Token.EOF;
@@ -77,56 +83,56 @@ public class Tokenizer {
 			try {
 				int r = read();
 				switch (r) {
-				case '1':
-				case '2':
-				case '3':
-				case '4':
-				case '5':
-				case '6':
-				case '7':
-				case '8':
-				case '9':
-				case '0':
-					if (!isNumeric && sb.length() > 0) {
-						this.preRead = r;
-						return Token.create(sb.toString());
-					}
-					isNumeric = true;
-					break;
-				case '+':
-				case '-':
-				case '*':
-				case '/':
-				case '%':
-					if (isNumeric) {
-						this.preRead = r;
-						return Token.create(sb.toString());
-					}
-					break;
-				case COMMA:
-					if (sb.length() > 0) {
-						this.preRead = r;
-						return Token.create(sb.toString());
-					} else {
-						return Token.create(String.valueOf((char) r));
-					}
-				case QUOTE:
-					isOpen = !isOpen;
-					break;
-				case EOS:
-					if (sb.length() > 0) {
-						return Token.create(sb.toString());
-					}
-					this.preReadTokens.add(Token.EOF);
-					return Token.EOF;
-				case SPACE:
-					if (!isOpen && sb.length() > 0) {
-						return Token.create(sb.toString());
-					} else if (isOpen) {
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '5':
+					case '6':
+					case '7':
+					case '8':
+					case '9':
+					case '0':
+						if (!isNumeric && sb.length() > 0) {
+							this.preRead = r;
+							return Token.create(sb.toString());
+						}
+						isNumeric = true;
 						break;
-					} else {
-						continue;
-					}
+					case '+':
+					case '-':
+					case '*':
+					case '/':
+					case '%':
+						if (isNumeric) {
+							this.preRead = r;
+							return Token.create(sb.toString());
+						}
+						break;
+					case COMMA:
+						if (sb.length() > 0) {
+							this.preRead = r;
+							return Token.create(sb.toString());
+						} else {
+							return Token.create(String.valueOf((char) r));
+						}
+					case QUOTE:
+						isOpen = !isOpen;
+						break;
+					case EOS:
+						if (sb.length() > 0) {
+							return Token.create(sb.toString());
+						}
+						this.preReadTokens.add(Token.EOF);
+						return Token.EOF;
+					case SPACE:
+						if (!isOpen && sb.length() > 0) {
+							return Token.create(sb.toString());
+						} else if (isOpen) {
+							break;
+						} else {
+							continue;
+						}
 				}
 				sb.append((char) r);
 			} catch (IOException e) {
@@ -141,4 +147,7 @@ public class Tokenizer {
 		}
 	}
 
+	public void push(Token token) {
+		preReadTokens.add(token);
+	}
 }

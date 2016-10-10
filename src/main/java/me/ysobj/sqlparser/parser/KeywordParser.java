@@ -12,11 +12,13 @@ public class KeywordParser implements Parser {
 		this.keyword = keyword;
 	}
 
+	public KeywordParser() {
+	}
+
 	@Override
 	public ASTree parse(Tokenizer tokenizer) throws ParseException {
 		Token token = tokenizer.peek();
-		if (token.getType() == Token.TokenType.KEYWORD
-				&& keyword.equals(token.getOriginal())) {
+		if (token.getType() == Token.TokenType.KEYWORD && (keyword == null || keyword.equals(token.getOriginal()))) {
 			tokenizer.next();
 			return new ASTree();
 		}

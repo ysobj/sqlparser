@@ -100,4 +100,23 @@ public class ParserTest {
 		assertThat(parser.parse(new Tokenizer("A")), not(nullValue()));
 		assertThat(parser.parse(new Tokenizer("B")), is(nullValue()));
 	}
+
+	@Test
+	public void testDelete() throws Exception {
+		Parser delete = new KeywordParser("delete");
+		Parser from = new KeywordParser("from");
+		Parser any = new KeywordParser();
+		Parser parser = new SequenceParser(delete, from, any);
+		parser.parse(new Tokenizer("delete from hoge"));
+		parser.parse(new Tokenizer("delete from fuga"));
+	}
+
+	@Test(expected = ParseException.class)
+	public void testDelete2() throws Exception {
+		Parser delete = new KeywordParser("delete");
+		Parser from = new KeywordParser("from");
+		Parser any = new KeywordParser();
+		Parser parser = new SequenceParser(delete, from, any);
+		parser.parse(new Tokenizer("delete from"));
+	}
 }

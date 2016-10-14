@@ -2,10 +2,11 @@ package me.ysobj.sqlparser.tokenizer;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import me.ysobj.sqlparser.model.Token;
-import me.ysobj.sqlparser.model.Token.TokenType;
 
 import org.junit.Test;
+
+import me.ysobj.sqlparser.model.Token;
+import me.ysobj.sqlparser.model.Token.TokenType;
 
 public class TokenizerTest {
 	@Test
@@ -246,5 +247,21 @@ public class TokenizerTest {
 		assertThat(tokenizer.hasNext(), is(false));
 		tmp = tokenizer.peek();
 		assertThat(tmp, is(Token.EOF));
+	}
+
+	@Test
+	public void testToArray() {
+		Tokenizer tokenizer = new Tokenizer("select * from hoge");
+		Token[] tokens = tokenizer.toArray();
+		assertThat(tokens.length, is(5));
+		assertThat(tokens[0].getOriginal(), is("select"));
+		assertThat(tokens[0].getType(), is(TokenType.KEYWORD));
+		assertThat(tokens[1].getOriginal(), is("*"));
+		assertThat(tokens[1].getType(), is(TokenType.OPERATOR));
+		assertThat(tokens[2].getOriginal(), is("from"));
+		assertThat(tokens[2].getType(), is(TokenType.KEYWORD));
+		assertThat(tokens[3].getOriginal(), is("hoge"));
+		assertThat(tokens[3].getType(), is(TokenType.KEYWORD));
+		assertThat(tokens[4], is(Token.EOF));
 	}
 }

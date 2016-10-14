@@ -83,56 +83,56 @@ public class Tokenizer {
 			try {
 				int r = read();
 				switch (r) {
-					case '1':
-					case '2':
-					case '3':
-					case '4':
-					case '5':
-					case '6':
-					case '7':
-					case '8':
-					case '9':
-					case '0':
-						if (!isNumeric && sb.length() > 0) {
-							this.preRead = r;
-							return Token.create(sb.toString());
-						}
-						isNumeric = true;
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+				case '0':
+					if (!isNumeric && sb.length() > 0) {
+						this.preRead = r;
+						return Token.create(sb.toString());
+					}
+					isNumeric = true;
+					break;
+				case '+':
+				case '-':
+				case '*':
+				case '/':
+				case '%':
+					if (isNumeric) {
+						this.preRead = r;
+						return Token.create(sb.toString());
+					}
+					break;
+				case COMMA:
+					if (sb.length() > 0) {
+						this.preRead = r;
+						return Token.create(sb.toString());
+					} else {
+						return Token.create(String.valueOf((char) r));
+					}
+				case QUOTE:
+					isOpen = !isOpen;
+					break;
+				case EOS:
+					if (sb.length() > 0) {
+						return Token.create(sb.toString());
+					}
+					this.preReadTokens.add(Token.EOF);
+					return Token.EOF;
+				case SPACE:
+					if (!isOpen && sb.length() > 0) {
+						return Token.create(sb.toString());
+					} else if (isOpen) {
 						break;
-					case '+':
-					case '-':
-					case '*':
-					case '/':
-					case '%':
-						if (isNumeric) {
-							this.preRead = r;
-							return Token.create(sb.toString());
-						}
-						break;
-					case COMMA:
-						if (sb.length() > 0) {
-							this.preRead = r;
-							return Token.create(sb.toString());
-						} else {
-							return Token.create(String.valueOf((char) r));
-						}
-					case QUOTE:
-						isOpen = !isOpen;
-						break;
-					case EOS:
-						if (sb.length() > 0) {
-							return Token.create(sb.toString());
-						}
-						this.preReadTokens.add(Token.EOF);
-						return Token.EOF;
-					case SPACE:
-						if (!isOpen && sb.length() > 0) {
-							return Token.create(sb.toString());
-						} else if (isOpen) {
-							break;
-						} else {
-							continue;
-						}
+					} else {
+						continue;
+					}
 				}
 				sb.append((char) r);
 			} catch (IOException e) {
@@ -149,5 +149,14 @@ public class Tokenizer {
 
 	public void push(Token token) {
 		preReadTokens.add(token);
+	}
+
+	public Token[] toArray() {
+		List<Token> list = new ArrayList<>();
+		while (this.hasNext()) {
+			list.add(this.next());
+		}
+		list.add(Token.EOF);
+		return list.toArray(new Token[] {});
 	}
 }

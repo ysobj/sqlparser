@@ -264,4 +264,29 @@ public class TokenizerTest {
 		assertThat(tokens[3].getType(), is(TokenType.KEYWORD));
 		assertThat(tokens[4], is(Token.EOF));
 	}
+
+	@Test
+	public void testTokenPosition() {
+		Token tmp = null;
+		Tokenizer tokenizer = null;
+		tokenizer = new Tokenizer("select * from hoge");
+		tmp = tokenizer.next();
+		assertThat(tmp.getStartPos(), is(0));
+		tmp = tokenizer.next();
+		assertThat(tmp.getStartPos(), is(7));
+		tmp = tokenizer.next();
+		assertThat(tmp.getStartPos(), is(9));
+		tmp = tokenizer.next();
+		assertThat(tmp.getStartPos(), is(14));
+		//
+		tokenizer = new Tokenizer("select     *    from   hoge");
+		tmp = tokenizer.next();
+		assertThat(tmp.getStartPos(), is(0));
+		tmp = tokenizer.next();
+		assertThat(tmp.getStartPos(), is(11));
+		tmp = tokenizer.next();
+		assertThat(tmp.getStartPos(), is(16));
+		tmp = tokenizer.next();
+		assertThat(tmp.getStartPos(), is(23));
+	}
 }

@@ -10,8 +10,7 @@ import me.ysobj.sqlparser.model.Token;
 
 public class Tokenizer {
 	private Reader reader;
-
-	// private Token preReadToken;
+	private int currentTokensStart = 0;
 	private List<Token> preReadTokens = new ArrayList<>();
 
 	private int preRead = -1;
@@ -77,11 +76,13 @@ public class Tokenizer {
 			return preReadTokens.remove(0);
 		}
 		StringBuilder sb = new StringBuilder();
+		int readLength = 0;
 		boolean isOpen = false;
 		boolean isNumeric = false;
 		while (true) {
 			try {
 				int r = read();
+				readLength++;
 				switch (r) {
 				case '1':
 				case '2':
@@ -95,7 +96,7 @@ public class Tokenizer {
 				case '0':
 					if (!isNumeric && sb.length() > 0) {
 						this.preRead = r;
-						return Token.create(sb.toString());
+						return createToken(sb.toString(), readLength);
 					}
 					isNumeric = true;
 					break;
@@ -106,31 +107,33 @@ public class Tokenizer {
 				case '%':
 					if (isNumeric) {
 						this.preRead = r;
-						return Token.create(sb.toString());
+						return createToken(sb.toString(), readLength);
 					}
 					break;
 				case COMMA:
 					if (sb.length() > 0) {
 						this.preRead = r;
-						return Token.create(sb.toString());
+						return createToken(sb.toString(), readLength);
 					} else {
-						return Token.create(String.valueOf((char) r));
+						return createToken(String.valueOf((char) r), readLength);
 					}
 				case QUOTE:
 					isOpen = !isOpen;
 					break;
 				case EOS:
 					if (sb.length() > 0) {
-						return Token.create(sb.toString());
+						return createToken(sb.toString(), readLength);
 					}
 					this.preReadTokens.add(Token.EOF);
 					return Token.EOF;
 				case SPACE:
 					if (!isOpen && sb.length() > 0) {
-						return Token.create(sb.toString());
+						return createToken(sb.toString(), readLength);
 					} else if (isOpen) {
 						break;
 					} else {
+						this.currentTokensStart++;
+						readLength = 0;
 						continue;
 					}
 				}
@@ -145,6 +148,12 @@ public class Tokenizer {
 				this.reader = null;
 			}
 		}
+	}
+
+	protected Token createToken(String str, int readLength) {
+		Token t = Token.create(str, this.currentTokensStart);
+		this.currentTokensStart += readLength;
+		return t;
 	}
 
 	public void push(Token token) {

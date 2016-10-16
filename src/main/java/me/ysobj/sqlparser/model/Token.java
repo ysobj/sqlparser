@@ -7,15 +7,17 @@ public class Token {
 		KEYWORD, LITERAL, NUMBER, OPERATOR, COMMA, OTHER
 	}
 
-	public static final Token EOF = new Token("", TokenType.OTHER);
+	public static final Token EOF = new Token("", TokenType.OTHER, 0);
+	private int startPos;
 	private String original;
 	private String normalize;
 	private TokenType type;
 
-	private Token(String str, TokenType type) {
+	private Token(String str, TokenType type, int startPos) {
 		this.original = str;
 		this.normalize = str != null ? str.toUpperCase() : str;
 		this.type = type;
+		this.startPos = startPos;
 	}
 
 	public String getOriginal() {
@@ -35,7 +37,7 @@ public class Token {
 		return false;
 	}
 
-	public static Token create(String str) {
+	public static Token create(String str, int start) {
 		char c = str.charAt(0);
 		TokenType tmpType = TokenType.KEYWORD;
 		if (c == QUOTE) {
@@ -48,7 +50,11 @@ public class Token {
 			tmpType = TokenType.COMMA;
 		}
 
-		return new Token(str, tmpType);
+		return new Token(str, tmpType, start);
+	}
+
+	public static Token create(String str) {
+		return create(str, 0);
 	}
 
 	@Override
@@ -67,6 +73,10 @@ public class Token {
 
 	public String getNormalize() {
 		return normalize;
+	}
+
+	public int getStartPos() {
+		return startPos;
 	}
 
 	@Override

@@ -4,11 +4,10 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
-
 import me.ysobj.sqlparser.exception.ParseException;
 import me.ysobj.sqlparser.tokenizer.Tokenizer;
+
+import org.junit.Test;
 
 public class ParserTest {
 	@Test
@@ -56,7 +55,8 @@ public class ParserTest {
 		Parser p2 = new KeywordParser("update");
 		Parser p3 = new KeywordParser("delete");
 		Parser parser = new SequenceParser(p1, p2, p3);
-		assertThat(parser.parse(new Tokenizer("select update delete")), not(nullValue()));
+		assertThat(parser.parse(new Tokenizer("select update delete")),
+				not(nullValue()));
 	}
 
 	@Test(expected = ParseException.class)
@@ -65,14 +65,17 @@ public class ParserTest {
 		Parser p2 = new KeywordParser("update");
 		Parser p3 = new KeywordParser("delete");
 		Parser parser = new SequenceParser(p1, p2, p3);
-		assertThat(parser.parse(new Tokenizer("select delete update")), is(nullValue()));
+		assertThat(parser.parse(new Tokenizer("select delete update")),
+				is(nullValue()));
 	}
 
 	@Test
 	public void testCombination() throws Exception {
 		// (A|B)CD
-		Parser ab = new ChoiceParser(new KeywordParser("A"), new KeywordParser("B"));
-		Parser parser = new SequenceParser(ab, new KeywordParser("C"), new KeywordParser("D"));
+		Parser ab = new ChoiceParser(new KeywordParser("A"), new KeywordParser(
+				"B"));
+		Parser parser = new SequenceParser(ab, new KeywordParser("C"),
+				new KeywordParser("D"));
 		assertThat(parser.parse(new Tokenizer("A C D")), not(nullValue()));
 		assertThat(parser.parse(new Tokenizer("B C D")), not(nullValue()));
 	}
@@ -80,16 +83,20 @@ public class ParserTest {
 	@Test(expected = ParseException.class)
 	public void testCombinationFailed1() throws Exception {
 		// (A|B)CD
-		Parser ab = new ChoiceParser(new KeywordParser("A"), new KeywordParser("B"));
-		Parser parser = new SequenceParser(ab, new KeywordParser("C"), new KeywordParser("D"));
+		Parser ab = new ChoiceParser(new KeywordParser("A"), new KeywordParser(
+				"B"));
+		Parser parser = new SequenceParser(ab, new KeywordParser("C"),
+				new KeywordParser("D"));
 		assertThat(parser.parse(new Tokenizer("A B C D")), is(nullValue()));
 	}
 
 	@Test(expected = ParseException.class)
 	public void testCombinationFailed2() throws Exception {
 		// (A|B)CD
-		Parser ab = new ChoiceParser(new KeywordParser("A"), new KeywordParser("B"));
-		Parser parser = new SequenceParser(ab, new KeywordParser("C"), new KeywordParser("D"));
+		Parser ab = new ChoiceParser(new KeywordParser("A"), new KeywordParser(
+				"B"));
+		Parser parser = new SequenceParser(ab, new KeywordParser("C"),
+				new KeywordParser("D"));
 		assertThat(parser.parse(new Tokenizer("C D")), is(nullValue()));
 	}
 
@@ -106,9 +113,13 @@ public class ParserTest {
 		Parser delete = new KeywordParser("delete");
 		Parser from = new KeywordParser("from");
 		Parser any = new KeywordParser();
-		Parser parser = new SequenceParser(delete, from, any);
+		Parser where = new OptionalParser(new SequenceParser(new KeywordParser(
+				"where"), new KeywordParser(), new KeywordParser("="),
+				new KeywordParser()));
+		Parser parser = new SequenceParser(delete, from, any, where);
 		parser.parse(new Tokenizer("delete from hoge"));
 		parser.parse(new Tokenizer("delete from fuga"));
+		parser.parse(new Tokenizer("delete from fuga where A = B"));
 	}
 
 	@Test(expected = ParseException.class)

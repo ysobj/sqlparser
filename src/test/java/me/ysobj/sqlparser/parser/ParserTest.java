@@ -128,6 +128,33 @@ public class ParserTest {
 		Parser from = new KeywordParser("from");
 		Parser any = new KeywordParser();
 		Parser parser = new SequenceParser(delete, from, any);
-		parser.parse(new Tokenizer("delete from"));
+		assertThat(parser.parse(new Tokenizer("delete from")), not(nullValue()));
+	}
+
+	@Test
+	public void testRepeatParser() throws Exception {
+		RepeatParser parser = new RepeatParser(new KeywordParser("A"));
+		assertThat(parser.parse(new Tokenizer("A A A")), not(nullValue()));
+	}
+
+	@Test
+	public void testRepeatParser2() throws Exception {
+		Parser parser = new SequenceParser(new KeywordParser("A"),
+				new RepeatParser(new SequenceParser(new CommaParser(),
+						new KeywordParser("A"))), new KeywordParser("B"));
+		assertThat(parser.parse(new Tokenizer("A,A,A B")), not(nullValue()));
+	}
+
+	@Test
+	public void testRepeatParser3() throws Exception {
+		Parser parser = new SequenceParser(new KeywordParser("select"),
+				new KeywordParser("A"), new OptionalParser(new RepeatParser(
+						new SequenceParser(new CommaParser(),
+								new KeywordParser("A")))), new KeywordParser(
+						"from"), new KeywordParser());
+		assertThat(parser.parse(new Tokenizer("select A,A,A from hoge")),
+				not(nullValue()));
+		assertThat(parser.parse(new Tokenizer("select A from fuga")),
+				not(nullValue()));
 	}
 }

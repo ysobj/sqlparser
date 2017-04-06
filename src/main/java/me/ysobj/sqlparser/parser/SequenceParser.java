@@ -13,12 +13,17 @@ public class SequenceParser implements Parser {
 
 	@Override
 	public ASTree parse(Tokenizer tokenizer) throws ParseException {
+		boolean accept = false;
 		for (Parser parser : parsers) {
 			ASTree tmp = parser.parse(tokenizer);
-			if (tmp == null) {
-				return null;
+			if (tmp != null) {
+				accept = true;
 			}
 		}
-		return new ASTree();
+		if (accept) {
+			return new ASTree();
+		} else {
+			return null;
+		}
 	}
 }

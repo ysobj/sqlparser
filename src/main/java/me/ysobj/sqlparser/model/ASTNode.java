@@ -1,5 +1,5 @@
 package me.ysobj.sqlparser.model;
 
-public class ASTree {
+public class ASTNode {
 
 }

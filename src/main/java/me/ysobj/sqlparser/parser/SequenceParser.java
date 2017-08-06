@@ -1,7 +1,7 @@
 package me.ysobj.sqlparser.parser;
 
 import me.ysobj.sqlparser.exception.ParseException;
-import me.ysobj.sqlparser.model.ASTree;
+import me.ysobj.sqlparser.model.ASTNode;
 import me.ysobj.sqlparser.tokenizer.Tokenizer;
 
 public class SequenceParser implements Parser {
@@ -12,16 +12,16 @@ public class SequenceParser implements Parser {
 	}
 
 	@Override
-	public ASTree parse(Tokenizer tokenizer) throws ParseException {
+	public ASTNode parse(Tokenizer tokenizer) throws ParseException {
 		boolean accept = false;
 		for (Parser parser : parsers) {
-			ASTree tmp = parser.parse(tokenizer);
+			ASTNode tmp = parser.parse(tokenizer);
 			if (tmp != null) {
 				accept = true;
 			}
 		}
 		if (accept) {
-			return new ASTree();
+			return new ASTNode();
 		} else {
 			return null;
 		}

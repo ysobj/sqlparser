@@ -7,7 +7,7 @@
 package me.ysobj.sqlparser.parser;
 
 import me.ysobj.sqlparser.exception.ParseException;
-import me.ysobj.sqlparser.model.ASTree;
+import me.ysobj.sqlparser.model.ASTNode;
 import me.ysobj.sqlparser.tokenizer.Tokenizer;
 
 /**
@@ -38,7 +38,7 @@ public class RepeatParser implements Parser {
 	 * @see me.ysobj.sqlparser.parser.Parser#parse(me.ysobj.sqlparser.tokenizer.Tokenizer)
 	 */
 	@Override
-	public ASTree parse(Tokenizer tokenizer) throws ParseException {
+	public ASTNode parse(Tokenizer tokenizer) throws ParseException {
 		parser.parse(tokenizer);
 		try {
 			while (true) {
@@ -46,6 +46,6 @@ public class RepeatParser implements Parser {
 			}
 		} catch (ParseException e) {
 		}
-		return new ASTree();
+		return new ASTNode();
 	}
 }

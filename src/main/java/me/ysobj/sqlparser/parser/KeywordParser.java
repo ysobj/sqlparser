@@ -24,4 +24,10 @@ public class KeywordParser implements Parser {
 		}
 		throw new ParseException();
 	}
+
+	@Override
+	public String toString() {
+		return keyword != null ? keyword : "KEYWORD";
+	}
+
 }

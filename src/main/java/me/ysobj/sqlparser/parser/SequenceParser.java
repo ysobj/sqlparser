@@ -1,5 +1,8 @@
 package me.ysobj.sqlparser.parser;
 
+import java.util.Arrays;
+import java.util.StringJoiner;
+
 import me.ysobj.sqlparser.exception.ParseException;
 import me.ysobj.sqlparser.model.ASTNode;
 import me.ysobj.sqlparser.tokenizer.Tokenizer;
@@ -23,7 +26,16 @@ public class SequenceParser implements Parser {
 		if (accept) {
 			return new ASTNode();
 		} else {
-			return null;
+			throw new ParseException();
 		}
 	}
+
+	@Override
+	public String toString() {
+		StringJoiner joiner = new StringJoiner(" ");
+		joiner.setEmptyValue("");
+		Arrays.stream(parsers).forEach(p -> joiner.add(p.toString()));
+		return joiner.toString();
+	}
+
 }

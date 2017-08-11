@@ -19,4 +19,10 @@ public class OptionalParser implements Parser {
 		}
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return "[" + parser.toString() + "]";
+	}
+
 }

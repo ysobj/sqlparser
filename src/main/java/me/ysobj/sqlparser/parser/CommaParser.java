@@ -15,4 +15,10 @@ public class CommaParser implements Parser {
 		}
 		throw new ParseException();
 	}
+
+	@Override
+	public String toString() {
+		return ",";
+	}
+
 }

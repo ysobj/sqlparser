@@ -48,4 +48,10 @@ public class RepeatParser implements Parser {
 		}
 		return new ASTNode();
 	}
+
+	@Override
+	public String toString() {
+		return parser.toString() + "*";
+	}
+
 }

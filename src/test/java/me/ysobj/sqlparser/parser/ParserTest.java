@@ -159,4 +159,5 @@ public class ParserTest {
 		assertThat(parser.parse(new Tokenizer("select A,A,A from hoge")), not(nullValue()));
 		assertThat(parser.parse(new Tokenizer("select A from fuga")), not(nullValue()));
 	}
+
 }

@@ -3,6 +3,8 @@ package me.ysobj.sqlparser.tokenizer;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.Reader;
+
 import org.junit.Test;
 
 import me.ysobj.sqlparser.model.Token;
@@ -289,4 +291,11 @@ public class TokenizerTest {
 		tmp = tokenizer.next();
 		assertThat(tmp.getStartPos(), is(23));
 	}
+
+	@Test
+	public void testNullReader() {
+		Tokenizer tokenizer = new Tokenizer((Reader) null);
+		assertThat(tokenizer.hasNext(), is(false));
+	}
+
 }

@@ -2,6 +2,7 @@ package me.ysobj.sqlparser;
 
 import me.ysobj.sqlparser.exception.ParseException;
 import me.ysobj.sqlparser.model.ASTNode;
+import me.ysobj.sqlparser.model.Token;
 import me.ysobj.sqlparser.parser.ChoiceParser;
 import me.ysobj.sqlparser.parser.CommaParser;
 import me.ysobj.sqlparser.parser.KeywordParser;
@@ -21,13 +22,19 @@ public class SqlParser implements Parser {
 		Parser selectPart = new SequenceParser(new KeywordParser("select"), selectExpression);
 		Parser tableExpression = new SequenceParser(new KeywordParser(),
 				new OptionalParser(new SequenceParser(new KeywordParser("as"), new KeywordParser())));
-		Parser fromPart = new SequenceParser(new KeywordParser("from"), tableExpression);
+		Parser fromPart = new SequenceParser(new KeywordParser("from"), new SequenceParser(tableExpression,
+				new OptionalParser(new RepeatParser(new SequenceParser(new CommaParser(), tableExpression)))));
 		parser = new SequenceParser(selectPart, fromPart);
 	}
 
 	@Override
 	public ASTNode parse(Tokenizer tokenizer) throws ParseException {
-		return parser.parse(tokenizer);
+		ASTNode node = parser.parse(tokenizer);
+		Token token = tokenizer.peek();
+		if (token != Token.EOF) {
+			throw new ParseException();
+		}
+		return node;
 	}
 
 	// <select_query> ::= <select_part> <from_part>

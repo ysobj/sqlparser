@@ -8,6 +8,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import me.ysobj.sqlparser.exception.ParseException;
+import me.ysobj.sqlparser.model.NumberLiteralNode;
 import me.ysobj.sqlparser.tokenizer.Tokenizer;
 
 public class ParserTest {
@@ -160,4 +161,9 @@ public class ParserTest {
 		assertThat(parser.parse(new Tokenizer("select A from fuga")), not(nullValue()));
 	}
 
+	@Test
+	public void testNumberLiteralParser() throws Exception {
+		Parser numberLiteralParser = new NumberLiteralParser(123);
+		assertThat(numberLiteralParser.parse(new Tokenizer("123")), is(new NumberLiteralNode()));
+	}
 }
